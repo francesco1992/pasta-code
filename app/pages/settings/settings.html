@@ -19,13 +19,14 @@
       <ion-label floating>Name</ion-label>
       <ion-input type="text" [(ngModel)]="settings.name"></ion-input>
     </ion-item>
-    <div class="error-message">{{requiredNameFieldMsg}}</div>
+    <div class="error-message" *ngIf="settings.name === ''">{{requiredNameFieldMsg}}</div>
 
     <ion-item>
       <ion-label floating>Phone</ion-label>
       <ion-input type="tel" [(ngModel)]="settings.phone"></ion-input>
     </ion-item>
-    <div class="error-message">{{requiredPhoneFieldMsg}}</div>
+    <div class="error-message" *ngIf="settings.phone === ''">{{requiredPhoneFieldMsg}}</div>
+    <div class="error-message" *ngIf="invalidPhoneFieldMsg !== '' && settings.phone !== ''">{{invalidPhoneFieldMsg}}</div>
   </ion-list>
 
   <div padding>

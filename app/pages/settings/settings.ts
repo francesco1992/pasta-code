@@ -16,6 +16,7 @@ import {SettingsService} from "../../providers/settings-service/settings-service
 export class SettingsPage implements OnInit {
   private requiredNameFieldMsg = "";
   private requiredPhoneFieldMsg = "";
+  private invalidPhoneFieldMsg = "";
   private settings: SettingModel;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
@@ -24,26 +25,24 @@ export class SettingsPage implements OnInit {
   }
 
   ngOnInit() {
-    //load settings using settings-service
     this.settings = this.settingsService.getSettings();
   }
 
   saveSettings() {
-    if (this.settings.phone.trim() === '') {
-      this.requiredPhoneFieldMsg = "This field is required";
-    }
+    let checkPhone = this.validatePhoneNumber(this.settings.phone);
+
     if (this.settings.name.trim() === '') {
       this.requiredNameFieldMsg = "This field is required";
-    }
-
-    if (this.settings.name.trim() !== '' && this.settings.phone.trim() !== '') {
-      if(!this.validatePhoneNumber(this.settings.phone)){
-        this.requiredPhoneFieldMsg = "Insert a valide phone number";
+    } else if (this.settings.phone.trim() !== '') {
+      if(!checkPhone){
+        this.invalidPhoneFieldMsg = "Insert a valid phone number";
+        this.requiredPhoneFieldMsg = "";
         return;
       } else {
         this.settingsService.saveSettings(this.settings.name, this.settings.phone);
-        this.requiredPhoneFieldMsg = "";
         this.requiredNameFieldMsg = "";
+        this.requiredPhoneFieldMsg = "";
+        this.invalidPhoneFieldMsg = "";
         let alert = this.alertCtrl.create({
           title: 'Settings',
           subTitle: 'Settings successfully saved',
@@ -52,6 +51,15 @@ export class SettingsPage implements OnInit {
         alert.present();
       }
     }
+
+    if (this.settings.phone.trim() === '') {
+      this.requiredPhoneFieldMsg = "This field is required";
+      this.invalidPhoneFieldMsg = "";
+    } else if(this.settings.name.trim() === '' && !checkPhone) {
+      this.invalidPhoneFieldMsg = "Insert a valid phone number";
+    }
+
+
   }
 
   validatePhoneNumber(phone): boolean {
