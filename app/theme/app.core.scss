@@ -18,3 +18,7 @@
 @import "../pages/settings/settings";
 
 @import "../pages/statistics/statistics";
+
+.tab-button[aria-selected=true] {
+  color: #32BE64;
+}
