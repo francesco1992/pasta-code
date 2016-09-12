@@ -7,12 +7,28 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>settings</ion-title>
+    <ion-title>Settings</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label floating>Name</ion-label>
+      <ion-input type="text" [(ngModel)]="settings.name"></ion-input>
+    </ion-item>
+    <div class="error-message">{{requiredNameFieldMsg}}</div>
 
+    <ion-item>
+      <ion-label floating>Phone</ion-label>
+      <ion-input type="tel" [(ngModel)]="settings.phone"></ion-input>
+    </ion-item>
+    <div class="error-message">{{requiredPhoneFieldMsg}}</div>
+  </ion-list>
+
+  <div padding>
+    <button secondary block (click)="saveSettings()">Save</button>
+  </div>
 </ion-content>

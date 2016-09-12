@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NavController, AlertController, ModalController} from 'ionic-angular';
 import {MealModel} from "../../models/MealModel";
 import {AddMealPage} from "../add-meal/add-meal";
@@ -8,13 +8,16 @@ import {MealsService} from "../../providers/meals-service/meals-service";
   templateUrl: 'build/pages/home/home.html',
   providers: [MealsService]
 })
-export class HomePage {
+export class HomePage implements OnInit {
   private meals: MealModel[] = [];
   private currentDate: string;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
               private modalCtrl: ModalController, private mealsService: MealsService) {
     this.currentDate = new Date().toLocaleDateString();
+  }
+
+  ngOnInit() {
     this.loadMeals();
   }
 
