@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, AlertController, ModalController} from 'ionic-angular';
+import {NavController, AlertController, ModalController, LocalStorage, Storage} from 'ionic-angular';
 import {MealModel} from "../../models/MealModel";
 import {AddMealPage} from "../add-meal/add-meal";
 import {MealsService} from "../../providers/meals-service/meals-service";
@@ -13,15 +13,24 @@ export class HomePage implements OnInit {
   private meals: MealModel[] = [];
   private currentDate: string;
   private orderTime: string;
+  private localStorage: LocalStorage;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
               private modalCtrl: ModalController, private mealsService: MealsService,
               private statsService: StatsService) {
     this.currentDate = new Date().toLocaleDateString();
+    this.localStorage = new Storage(LocalStorage);
   }
 
   ngOnInit() {
     this.loadMeals();
+    let today = new Date().toLocaleDateString().toString();
+    this.localStorage.get(this.currentDate).then((check) => {
+      //console.log(check);
+      if(check) {
+        this.orderTime = check;
+      }
+    });
   }
 
   loadMeals() {
@@ -107,6 +116,7 @@ export class HomePage implements OnInit {
             //console.log("send message");
             let now = new Date();
             this.orderTime = now.toLocaleTimeString();
+            this.localStorage.set(now.toLocaleDateString(), now.toLocaleTimeString());
             this.updateStats();
           }
         }

@@ -14,6 +14,9 @@
   <ion-list-header *ngIf="!orderTime">
     Create a new order for today ({{currentDate}})
   </ion-list-header>
+  <ion-list-header *ngIf="orderTime">
+    Today order sent at ({{orderTime}})
+  </ion-list-header>
   <ion-item *ngFor="let meal of meals" (press)="deleteMeal($event, meal)" class="light-grey">
     <span>{{meal.name}}</span>
     <ion-icon class="pointer-cursor light-black" item-right name="remove-circle" (click)="decreaseCount(meal)"></ion-icon>
