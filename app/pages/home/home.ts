@@ -3,6 +3,7 @@ import {NavController, AlertController, ModalController} from 'ionic-angular';
 import {MealModel} from "../../models/MealModel";
 import {AddMealPage} from "../add-meal/add-meal";
 import {MealsService} from "../../providers/meals-service/meals-service";
+import {StatsService} from "../../providers/stats-service/stats-service";
 
 @Component({
   templateUrl: 'build/pages/home/home.html',
@@ -11,9 +12,11 @@ import {MealsService} from "../../providers/meals-service/meals-service";
 export class HomePage implements OnInit {
   private meals: MealModel[] = [];
   private currentDate: string;
+  private orderTime: string;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
-              private modalCtrl: ModalController, private mealsService: MealsService) {
+              private modalCtrl: ModalController, private mealsService: MealsService,
+              private statsService: StatsService) {
     this.currentDate = new Date().toLocaleDateString();
   }
 
@@ -89,6 +92,38 @@ export class HomePage implements OnInit {
 
   // Show alert for order confirmation
   showOrderConfirmation() {
-    console.log("show order confirmation");
+    let alert = this.alertCtrl.create({
+      title: 'Order Confirmation',
+      message: 'Do you want to send this order?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => { }
+        },
+        {
+          text: 'Go!',
+          handler: () => {
+            //console.log("send message");
+            let now = new Date();
+            this.orderTime = now.toLocaleTimeString();
+            this.updateStats();
+          }
+        }
+      ]
+    });
+    alert.present();
   }
+
+  updateStats() {
+    let numOfMeals = 0;
+    for (let meal of this.meals) {
+      numOfMeals += meal.count;
+    }
+    console.log(numOfMeals);
+    this.statsService.saveMealStats(numOfMeals).then(res => {
+      //console.log(res);
+    });
+  }
+
 }
