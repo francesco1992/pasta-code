@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, AlertController} from 'ionic-angular';
+import {NavController, AlertController, Events} from 'ionic-angular';
 import {SettingModel} from "../../models/SettingModel";
 import {SettingsService} from "../../providers/settings-service/settings-service";
 
@@ -20,8 +20,14 @@ export class SettingsPage implements OnInit {
   private settings: SettingModel;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
-              private settingsService: SettingsService) {
-
+              private settingsService: SettingsService, private events: Events) {
+    this.events.subscribe('settings:render', (stringa) => {
+      //console.log('render settings');
+      this.settings = this.settingsService.getSettings();
+      this.requiredPhoneFieldMsg = "";
+      this.invalidPhoneFieldMsg = "";
+      this.requiredNameFieldMsg = "";
+    });
   }
 
   ngOnInit() {
