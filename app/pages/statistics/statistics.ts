@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {NavController, Events} from 'ionic-angular';
 import {StatsService} from "../../providers/stats-service/stats-service";
 
 /*
@@ -14,8 +14,14 @@ import {StatsService} from "../../providers/stats-service/stats-service";
 export class StatisticsPage implements OnInit {
   private stats;
 
-  constructor(private navCtrl: NavController, private statsService: StatsService) {
+  constructor(private navCtrl: NavController, private statsService: StatsService,
+              private events: Events) {
     this.stats = [];
+    this.events.subscribe('statistics:updated', (userEventData) => {
+      this.statsService.getMealsStats().then((resp)=>{
+        this.loadStats(resp);
+      });
+    });
   }
 
   ngOnInit(): void {

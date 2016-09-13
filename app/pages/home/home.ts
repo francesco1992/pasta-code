@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController, AlertController, ModalController, LocalStorage, Storage} from 'ionic-angular';
+import {NavController, AlertController, ModalController, LocalStorage, Storage, Events} from 'ionic-angular';
 import {MealModel} from "../../models/MealModel";
 import {AddMealPage} from "../add-meal/add-meal";
 import {MealsService} from "../../providers/meals-service/meals-service";
@@ -17,7 +17,7 @@ export class HomePage implements OnInit {
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
               private modalCtrl: ModalController, private mealsService: MealsService,
-              private statsService: StatsService) {
+              private statsService: StatsService, private events: Events) {
     this.currentDate = new Date().toLocaleDateString();
     this.localStorage = new Storage(LocalStorage);
   }
@@ -130,10 +130,11 @@ export class HomePage implements OnInit {
     for (let meal of this.meals) {
       numOfMeals += meal.count;
     }
-    console.log(numOfMeals);
+    //console.log(numOfMeals);
     this.statsService.saveMealStats(numOfMeals).then(res => {
       //console.log(res);
     });
+    this.events.publish('statistics:updated', numOfMeals);
   }
 
 }
