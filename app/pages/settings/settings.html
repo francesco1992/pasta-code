@@ -15,22 +15,28 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <ion-label floating>Name</ion-label>
-      <ion-input type="text" [(ngModel)]="settings.name"></ion-input>
-    </ion-item>
-    <div class="error-message" *ngIf="settings.name === ''">{{requiredNameFieldMsg}}</div>
+  <ion-list inset>
+    <form [formGroup]="myForm" (ngSubmit)="onSubmit(myForm)" novalidate>
+      <ion-item>
+        <ion-label floating>Name</ion-label>
+        <ion-input type="text" formControlName="name"
+                   name="name" [(ngModel)]="settings.name"></ion-input>
+      </ion-item>
+      <p [hidden]="myForm.controls.name.valid"
+         danger padding-left>Name is not valid</p>
+      <ion-item>
+        <ion-label floating>Phone</ion-label>
+        <ion-input type="text" formControlName="phone"
+                   name="phone" [(ngModel)]="settings.phone"></ion-input>
+      </ion-item>
+      <p [hidden]="myForm.controls.phone.valid"
+         danger padding-left>Phone is not valid</p>
 
-    <ion-item>
-      <ion-label floating>Phone</ion-label>
-      <ion-input type="tel" [(ngModel)]="settings.phone"></ion-input>
-    </ion-item>
-    <div class="error-message" *ngIf="settings.phone === ''">{{requiredPhoneFieldMsg}}</div>
-    <div class="error-message" *ngIf="invalidPhoneFieldMsg !== '' && settings.phone !== ''">{{invalidPhoneFieldMsg}}</div>
+      <button full secondary
+              [disabled]="!myForm.controls.name.valid || !myForm.controls.phone.valid"
+              class="btn-margin-top">
+        Save
+      </button>
+    </form>
   </ion-list>
-
-  <div padding>
-    <button secondary block (click)="saveSettings()">Save</button>
-  </div>
 </ion-content>

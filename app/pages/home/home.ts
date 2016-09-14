@@ -26,7 +26,6 @@ export class HomePage implements OnInit {
     this.loadMeals();
     let today = new Date().toLocaleDateString().toString();
     this.localStorage.get(this.currentDate).then((check) => {
-      //console.log(check);
       if(check) {
         this.orderTime = check;
       }
@@ -113,7 +112,6 @@ export class HomePage implements OnInit {
         {
           text: 'Go!',
           handler: () => {
-            //console.log("send message");
             let now = new Date();
             this.orderTime = now.toLocaleTimeString();
             this.localStorage.set(now.toLocaleDateString(), now.toLocaleTimeString());
@@ -130,9 +128,8 @@ export class HomePage implements OnInit {
     for (let meal of this.meals) {
       numOfMeals += meal.count;
     }
-    //console.log(numOfMeals);
     this.statsService.saveMealStats(numOfMeals).then(res => {
-      //console.log(res);
+
     });
     this.events.publish('statistics:updated', numOfMeals);
   }

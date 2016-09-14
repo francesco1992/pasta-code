@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavController, AlertController, Events} from 'ionic-angular';
 import {SettingModel} from "../../models/SettingModel";
 import {SettingsService} from "../../providers/settings-service/settings-service";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 /*
   Generated class for the SettingsPage page.
@@ -14,19 +15,20 @@ import {SettingsService} from "../../providers/settings-service/settings-service
   providers: [SettingsService]
 })
 export class SettingsPage implements OnInit {
-  private requiredNameFieldMsg = "";
-  private requiredPhoneFieldMsg = "";
-  private invalidPhoneFieldMsg = "";
   private settings: SettingModel;
+  myForm: FormGroup;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
-              private settingsService: SettingsService, private events: Events) {
+              private settingsService: SettingsService, private events: Events,
+              private builder: FormBuilder) {
+    this.myForm = builder.group({
+      'name': ['', Validators.required],
+      'phone': ['', Validators.compose([Validators.required,
+        Validators.pattern('^[(]{0,1}[0-9]{3}[)\\.\\- ]{0,1}[0-9]{3}[\\.\\- ]{0,1}[0-9]{4}$')])]
+    });
+
     this.events.subscribe('settings:render', (stringa) => {
-      //console.log('render settings');
       this.settings = this.settingsService.getSettings();
-      this.requiredPhoneFieldMsg = "";
-      this.invalidPhoneFieldMsg = "";
-      this.requiredNameFieldMsg = "";
     });
   }
 
@@ -34,43 +36,14 @@ export class SettingsPage implements OnInit {
     this.settings = this.settingsService.getSettings();
   }
 
-  saveSettings() {
-    let checkPhone = this.validatePhoneNumber(this.settings.phone);
-
-    if (this.settings.name.trim() === '') {
-      this.requiredNameFieldMsg = "This field is required";
-    } else if (this.settings.phone.trim() !== '') {
-      if(!checkPhone){
-        this.invalidPhoneFieldMsg = "Insert a valid phone number";
-        this.requiredPhoneFieldMsg = "";
-        return;
-      } else {
-        this.settingsService.saveSettings(this.settings.name, this.settings.phone);
-        this.requiredNameFieldMsg = "";
-        this.requiredPhoneFieldMsg = "";
-        this.invalidPhoneFieldMsg = "";
-        let alert = this.alertCtrl.create({
-          title: 'Settings',
-          subTitle: 'Settings successfully saved',
-          buttons: ['Let me go!']
-        });
-        alert.present();
-      }
-    }
-
-    if (this.settings.phone.trim() === '') {
-      this.requiredPhoneFieldMsg = "This field is required";
-      this.invalidPhoneFieldMsg = "";
-    } else if(this.settings.name.trim() === '' && !checkPhone) {
-      this.invalidPhoneFieldMsg = "Insert a valid phone number";
-    }
-
-
-  }
-
-  validatePhoneNumber(phone): boolean {
-    var phone_regexp = new RegExp('^[(]{0,1}[0-9]{3}[)\\.\\- ]{0,1}[0-9]{3}[\\.\\- ]{0,1}[0-9]{4}$');
-    return phone_regexp.test(phone);
+  onSubmit(formData) {
+    this.settingsService.saveSettings(this.settings.name, this.settings.phone);
+    let alert = this.alertCtrl.create({
+      title: 'Settings',
+      subTitle: 'Settings successfully saved',
+      buttons: ['Let me go!']
+    });
+    alert.present();
   }
 
 }
