@@ -38,7 +38,7 @@ export class StatisticsPage implements OnInit {
 
   loadStats(resp) {
     let tmp = [];
-
+    this.totalMeals = 0;
     if (resp.res.rows.length > 0) {
       for (var i = 0; i < resp.res.rows.length; i++) {
         let mealStats = resp.res.rows.item(i);
