@@ -13,10 +13,16 @@ import {StatsService} from "../../providers/stats-service/stats-service";
 })
 export class StatisticsPage implements OnInit {
   private stats;
+  private currentMonth;
+  private currentDate;
+  private totalMeals: number = 0;
 
   constructor(private navCtrl: NavController, private statsService: StatsService,
               private events: Events) {
     this.stats = [];
+    this.currentDate = new Date();
+    this.currentMonth = this.getCurrentMonth(this.currentDate);
+
     this.events.subscribe('statistics:updated', (userEventData) => {
       this.statsService.getMealsStats().then((resp)=>{
         this.loadStats(resp);
@@ -25,7 +31,6 @@ export class StatisticsPage implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.stats = this.statsService.getMealsStats();
     this.statsService.getMealsStats().then((resp)=>{
       this.loadStats(resp);
     });
@@ -33,14 +38,24 @@ export class StatisticsPage implements OnInit {
 
   loadStats(resp) {
     let tmp = [];
+
     if (resp.res.rows.length > 0) {
       for (var i = 0; i < resp.res.rows.length; i++) {
         let mealStats = resp.res.rows.item(i);
         let date = new Date(mealStats.date);
-        tmp.push({date: date.toLocaleDateString(), time: date.toLocaleTimeString(), count: mealStats.num_meals});
+        if(date.getMonth() === this.currentDate.getMonth()) {
+          tmp.push({date: date.toLocaleDateString(), time: date.toLocaleTimeString(), count: mealStats.num_meals});
+          this.totalMeals += mealStats.num_meals;
+        }
       }
       this.stats = tmp;
     }
+  }
+
+  getCurrentMonth(date) {
+    var months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ];
+    var currMonth = months[date.getMonth()];
+    return currMonth;
   }
 
 }
