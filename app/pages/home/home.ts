@@ -26,7 +26,6 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.loadMeals();
-    let today = new Date().toLocaleDateString().toString();
     this.localStorage.get(this.currentDate).then((check) => {
       if(check) {
         this.orderTime = check;
@@ -102,30 +101,47 @@ export class HomePage implements OnInit {
 
   // Show alert for order confirmation
   showOrderConfirmation() {
-    let alert = this.alertCtrl.create({
-      title: 'Order Confirmation',
-      message: 'Do you want to send this order?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => { }
-        },
-        {
-          text: 'Go!',
-          handler: () => {
-            let now = new Date();
-            this.orderTime = now.toLocaleTimeString();
-            this.localStorage.set(now.toLocaleDateString(), now.toLocaleTimeString());
-            this.updateStats();
-            for(let meal of this.meals) {
-              this.mealsService.updateMeal(meal);
+    if(this.orderEmpty()) {
+      let alert = this.alertCtrl.create({
+        title: 'Order empty',
+        subTitle: 'Your order has no meals yet',
+        buttons: ['OK']
+      });
+      alert.present();
+    } else {
+      let alert = this.alertCtrl.create({
+        title: 'Order Confirmation',
+        message: 'Do you want to send this order?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => { }
+          },
+          {
+            text: 'Go!',
+            handler: () => {
+              let now = new Date();
+              this.orderTime = now.toLocaleTimeString();
+              this.localStorage.set(now.toLocaleDateString(), now.toLocaleTimeString());
+              this.updateStats();
+              for(let meal of this.meals) {
+                this.mealsService.updateMeal(meal);
+              }
             }
           }
-        }
-      ]
-    });
-    alert.present();
+        ]
+      });
+      alert.present();
+    }
+  }
+
+  orderEmpty() {
+    let numMeals = 0;
+    for(let meal of this.meals) {
+      numMeals += meal.count;
+    }
+    return numMeals === 0;
   }
 
   updateStats() {
