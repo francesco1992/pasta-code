@@ -40,7 +40,7 @@ export class HomePage implements OnInit {
         let result: MealModel[] = [];
         for (var i = 0; i < resp.res.rows.length; i++) {
           let meal = resp.res.rows.item(i);
-          result.push({name: meal.name, count: 0});
+          result.push({name: meal.name, count: meal.count});
         }
         this.meals = result;
       }
@@ -118,6 +118,9 @@ export class HomePage implements OnInit {
             this.orderTime = now.toLocaleTimeString();
             this.localStorage.set(now.toLocaleDateString(), now.toLocaleTimeString());
             this.updateStats();
+            for(let meal of this.meals) {
+              this.mealsService.updateMeal(meal);
+            }
           }
         }
       ]

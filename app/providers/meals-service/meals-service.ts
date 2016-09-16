@@ -15,7 +15,7 @@ export class MealsService {
 
   constructor() {
     this.storage = new Storage(SqlStorage, {name: 'meals-storage'});
-    this.storage.query('CREATE TABLE IF NOT EXISTS meals (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)');
+    this.storage.query('CREATE TABLE IF NOT EXISTS meals (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, count INTEGER)');
   }
 
   getMeals() {
@@ -33,8 +33,13 @@ export class MealsService {
   }
 
   saveMeal(name) {
-    let sql = 'INSERT INTO meals (name) VALUES (?)';
-    return this.storage.query(sql, [name]);
+    let sql = 'INSERT INTO meals (name, count) VALUES (?,?)';
+    return this.storage.query(sql, [name, 0]);
+  }
+
+  updateMeal(meal) {
+    let sql = 'UPDATE meals SET count=? WHERE name=?';
+    return this.storage.query(sql, [meal.count, meal.name]);
   }
 
   deleteMeal(name) {
