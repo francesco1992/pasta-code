@@ -3,6 +3,7 @@ import {NavController, AlertController, Events} from 'ionic-angular';
 import {SettingModel} from "../../models/SettingModel";
 import {SettingsService} from "../../providers/settings-service/settings-service";
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {LogoComponent} from '../logo/logo';
 
 /*
   Generated class for the SettingsPage page.
@@ -12,7 +13,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 */
 @Component({
   templateUrl: 'build/pages/settings/settings.html',
-  providers: [SettingsService]
+  providers: [SettingsService],
+  directives: [LogoComponent]
 })
 export class SettingsPage implements OnInit {
   private settings: SettingModel;

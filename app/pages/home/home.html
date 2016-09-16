@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-buttons left>
-      <img src="img/logo-min.png" style="width: 60%; margin-left: 10px" />
+      <logo></logo>
     </ion-buttons>
     <ion-title>Pasta Code</ion-title>
     <ion-buttons end>
@@ -32,6 +32,7 @@
 
     <button full secondary
             (click)="showOrderConfirmation()"
-            class="btn-margin-top">Send Message</button>
+            class="btn-margin-top"
+            [disabled]="orderTime">Send Message</button>
   </ion-list>
 </ion-content>

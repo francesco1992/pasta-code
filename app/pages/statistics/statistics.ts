@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavController, Events} from 'ionic-angular';
 import {StatsService} from "../../providers/stats-service/stats-service";
+import {LogoComponent} from '../logo/logo';
 
 /*
   Generated class for the StatisticsPage page.
@@ -10,6 +11,7 @@ import {StatsService} from "../../providers/stats-service/stats-service";
 */
 @Component({
   templateUrl: 'build/pages/statistics/statistics.html',
+  directives: [LogoComponent]
 })
 export class StatisticsPage implements OnInit {
   private stats;

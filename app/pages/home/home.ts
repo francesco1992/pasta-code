@@ -4,10 +4,12 @@ import {MealModel} from "../../models/MealModel";
 import {AddMealPage} from "../add-meal/add-meal";
 import {MealsService} from "../../providers/meals-service/meals-service";
 import {StatsService} from "../../providers/stats-service/stats-service";
+import {LogoComponent} from '../logo/logo';
 
 @Component({
   templateUrl: 'build/pages/home/home.html',
-  providers: [MealsService]
+  providers: [MealsService],
+  directives: [LogoComponent]
 })
 export class HomePage implements OnInit {
   private meals: MealModel[] = [];
