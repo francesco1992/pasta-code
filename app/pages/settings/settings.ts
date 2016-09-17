@@ -26,7 +26,7 @@ export class SettingsPage implements OnInit {
     this.myForm = builder.group({
       'name': ['', Validators.required],
       'phone': ['', Validators.compose([Validators.required,
-        Validators.pattern('^[(]{0,1}[0-9]{3}[)\\.\\- ]{0,1}[0-9]{3}[\\.\\- ]{0,1}[0-9]{4}$')])]
+        Validators.pattern('^\\+(?:[0-9] ?){6,14}[0-9]$')])]
     });
 
     this.events.subscribe('settings:render', (stringa) => {

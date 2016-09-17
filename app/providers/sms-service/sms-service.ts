@@ -62,8 +62,6 @@ export class SmsService {
 
   // return encoded base64 credentials
   private getBase64Credentials() {
-    console.log(new Base64().encode(this.credentials.accountSid + ':' +
-      this.credentials.authToken));
     return new Base64().encode(this.credentials.accountSid + ':' +
       this.credentials.authToken);
   }
@@ -83,12 +81,10 @@ export class SmsService {
     let body = this.serializeData(data);
     let headers = this.generateHeaders();
 
-    return this.http.post(url, body.toString(), {
+    return this.http.post(url, body, {
       headers: headers
     });
   }
-
-  constructor(private http: Http) {}
 
 }
 

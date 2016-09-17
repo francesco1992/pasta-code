@@ -38,5 +38,13 @@ export class SettingsService {
     return res;
   }
 
+  getName() {
+    return this.storage.get('name');
+  }
+
+  getPhone() {
+    return this.storage.get('phone');
+  }
+
 }
 
