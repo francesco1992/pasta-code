@@ -23,6 +23,8 @@ export class SettingsPage implements OnInit {
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
               private settingsService: SettingsService, private events: Events,
               private builder: FormBuilder) {
+    this.settings = new SettingModel("", "");
+
     this.myForm = builder.group({
       'name': ['', Validators.required],
       'phone': ['', Validators.compose([Validators.required,
@@ -30,22 +32,31 @@ export class SettingsPage implements OnInit {
     });
 
     this.events.subscribe('settings:render', (stringa) => {
-      this.settings = this.settingsService.getSettings();
+      Promise.all([this.settingsService.getName(),
+        this.settingsService.getPhone()]).then(results => {
+          this.settings.name = results[0];
+          this.settings.phone = results[1];
+      });
     });
   }
 
   ngOnInit() {
-    this.settings = this.settingsService.getSettings();
+    Promise.all([this.settingsService.getName(), this.settingsService.getPhone()]).then(result => {
+      this.settings.name = result[0];
+      this.settings.phone = result[1];
+    });
   }
 
   onSubmit(formData) {
-    this.settingsService.saveSettings(this.settings.name, this.settings.phone);
-    let alert = this.alertCtrl.create({
-      title: 'Settings',
-      subTitle: 'Settings successfully saved',
-      buttons: ['Let me go!']
+    Promise.all([this.settingsService.setName(this.settings.name),
+      this.settingsService.setPhone(this.settings.phone)]).then(result => {
+        let alert = this.alertCtrl.create({
+          title: 'Settings',
+          subTitle: 'Settings successfully saved',
+          buttons: ['Let me go!']
+        });
+        alert.present();
     });
-    alert.present();
   }
 
 }

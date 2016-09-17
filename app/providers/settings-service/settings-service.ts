@@ -12,38 +12,33 @@ import {SettingModel} from "../../models/SettingModel";
 */
 @Injectable()
 export class SettingsService {
-  private storage: Storage;
+  private static storage = null;
 
-  constructor(private http: Http) {
-    this.storage = new Storage(SqlStorage, {name: 'settings-storage'});
+  constructor() {
+    SettingsService.getInstance();
   }
 
-  saveSettings(name, phone) {
-    this.storage.set('name', name);
-    this.storage.set('phone', phone);
-  }
-
-  getSettings(): SettingModel {
-    let res = new SettingModel("", "");
-    this.storage.get('name').then((name) => {
-      if(name) {
-        res.name = name;
-      }
-    });
-    this.storage.get('phone').then((phone) => {
-      if(phone) {
-        res.phone = phone;
-      }
-    });
-    return res;
+  static getInstance() {
+    if(SettingsService.storage === null) {
+      SettingsService.storage = new Storage(SqlStorage);
+    }
+    return SettingsService.storage;
   }
 
   getName() {
-    return this.storage.get('name');
+    return SettingsService.storage.get('name');
   }
 
   getPhone() {
-    return this.storage.get('phone');
+    return SettingsService.storage.get('phone');
+  }
+
+  setName(name) {
+    return SettingsService.storage.set('name', name);
+  }
+
+  setPhone(phone) {
+    return SettingsService.storage.set('phone', phone);
   }
 
 }
