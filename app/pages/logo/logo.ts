@@ -5,7 +5,11 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'logo',
-  template: '<img src="img/logo-min.png" class="logo"/>'
+  template: `
+    <ion-buttons left>
+      <img src="img/logo-min.png" class="logo"/>
+    </ion-buttons>
+    `
 })
 export class LogoComponent {
 
