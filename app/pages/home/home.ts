@@ -7,10 +7,13 @@ import {StatsService} from "../../providers/stats-service/stats-service";
 import {LogoComponent} from '../logo/logo';
 import {SettingsService} from "../../providers/settings-service/settings-service";
 import {SmsService} from "../../providers/sms-service/sms-service";
+import {SlackService} from "../../providers/slack-service/slack-service";
 
 @Component({
   templateUrl: 'build/pages/home/home.html',
-  providers: [MealsService, SmsService],
+  providers: [MealsService,
+              SmsService,
+              SlackService],
   directives: [LogoComponent]
 })
 export class HomePage implements OnInit {
@@ -22,7 +25,8 @@ export class HomePage implements OnInit {
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
               private modalCtrl: ModalController, private mealsService: MealsService,
               private statsService: StatsService, private events: Events,
-              private settingsService: SettingsService, private smsService: SmsService) {
+              private settingsService: SettingsService, private smsService: SmsService,
+              private slackService: SlackService) {
     this.currentDate = new Date().toLocaleDateString();
     this.localStorage = new Storage(LocalStorage);
   }
@@ -31,7 +35,7 @@ export class HomePage implements OnInit {
     this.loadMeals();
     this.localStorage.get(this.currentDate).then((check) => {
       if(check) {
-        this.orderTime = check;
+        //this.orderTime = check;
       }
     });
   }
@@ -149,13 +153,13 @@ export class HomePage implements OnInit {
   // send message using sms-provider
   sendMessage(name, phone) {
     let credentials = {
-      accountSid: 'AC08b0ff94809c3876fb9ef494f7cdb127',
-      authToken: '5e83ab2d9f2bfad89d90fa2956b59b23'
+      accountSid: 'AC38a5b165db7d57c6f8aa5b6f0854a697',
+      authToken: '937a3dc274aab5417b53a97172cb4bfa'
     };
     this.smsService.setCredentials(credentials);
 
     let msgData = {
-      From: '+12143909560',
+      From: '+12019924907',
       To: '',
       Body: ''
     };
@@ -190,6 +194,7 @@ export class HomePage implements OnInit {
     this.localStorage.set(now.toLocaleDateString(), now.toLocaleTimeString());
     this.orderTime = now.toLocaleTimeString();
     this.updateStats();
+    this.sendSlackMessage();
     let alert = this.alertCtrl.create({
       title: 'Order sent!',
       subTitle: 'Your order has been successfully sent.\nSee you tomorrow!',
@@ -215,6 +220,21 @@ export class HomePage implements OnInit {
     this.statsService.saveMealStats(numOfMeals).then(res => {
       this.events.publish('statistics:updated', numOfMeals);
     });
+  }
+
+  // send message to slack group
+  sendSlackMessage() {
+    let webhookUrl = "https://hooks.slack.com/services/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";
+    let textMsg = this.createSlackMessage();
+    this.slackService.sendMessage(webhookUrl, textMsg).subscribe(
+      res => console.log(res),
+      err => console.log(err)
+    );
+  }
+
+  // create message basing on average delivery time
+  createSlackMessage(): string {
+    return "L'ordine per i pranzi è stato inviato. Tempo stimato di consegna: 1 ora e 30 minuti";
   }
 
 }
