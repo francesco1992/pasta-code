@@ -9,7 +9,9 @@
   <ion-navbar>
     <ion-title>Add Meal</ion-title>
     <ion-buttons end>
-      <button (click)="close()"><ion-icon name="close"></ion-icon></button>
+      <button (click)="close()">
+        <ion-icon name="close"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 
@@ -28,5 +30,6 @@
       <ion-checkbox dark [(ngModel)]="checked"></ion-checkbox>
     </ion-item>
   </ion-list>
-  <button (click)="saveMeal()" full secondary>Save</button>
+  <button full secondary
+          (click)="saveMeal()">Save</button>
 </ion-content>

@@ -20,10 +20,15 @@
       Statistics for <i>{{currentMonth}}</i>
     </ion-list-header>
     <ion-item>
-      <ion-label><ion-icon name="md-calendar"></ion-icon> Date</ion-label>
-      <ion-label><ion-icon name="md-time"></ion-icon> Time</ion-label>
-      <!-- <ion-label item-right><ion-icon name="md-restaurant"></ion-icon> Totale</ion-label> -->
-      <ion-badge item-right><ion-icon name="md-restaurant"></ion-icon> &nbsp;Total</ion-badge>
+      <ion-label>
+        <ion-icon name="md-calendar"></ion-icon> Date
+      </ion-label>
+      <ion-label>
+        <ion-icon name="md-time"></ion-icon> Time
+      </ion-label>
+      <ion-badge item-right>
+        <ion-icon name="md-restaurant"></ion-icon> &nbsp;Total
+      </ion-badge>
     </ion-item>
     <ion-item *ngFor="let stat of stats">
       <ion-label>{{stat.date}}</ion-label>
