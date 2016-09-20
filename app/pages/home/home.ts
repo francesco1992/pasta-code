@@ -276,6 +276,14 @@ export class HomePage implements OnInit {
     this.deliveryTimesService.saveDeliveryTime(this.currentDate,
       this.calculateMinutesGap(this.deliveryTime, this.orderTime)).then(res => {
         this.deliveryCheck = true;
+        setTimeout(() => {
+          let alert = this.alertCtrl.create({
+            title: 'Delivery time',
+            subTitle: 'Delivery time has been successfully submitted!',
+            buttons: ['OK']
+          });
+          alert.present();
+        },1000 );
       });
   }
 
