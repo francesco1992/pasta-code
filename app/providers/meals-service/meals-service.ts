@@ -20,16 +20,6 @@ export class MealsService {
 
   getMeals() {
     return this.storage.query('select * from meals');
-    /*var result: MealModel[] = [];
-    this.storage.query('select * from meals').then((resp) => {
-      if (resp.res.rows.length > 0) {
-        for (var i = 0; i < resp.res.rows.length; i++) {
-          let meal = resp.res.rows.item(i);
-          result.push({name: meal.name, count: 0});
-        }
-      }
-    });
-    return result;*/
   }
 
   saveMeal(name) {
