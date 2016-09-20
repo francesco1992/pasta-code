@@ -8,12 +8,14 @@ import {LogoComponent} from '../logo/logo';
 import {SettingsService} from "../../providers/settings-service/settings-service";
 import {SmsService} from "../../providers/sms-service/sms-service";
 import {SlackService} from "../../providers/slack-service/slack-service";
+import {DeliveryTimesService} from "../../providers/delivery-times-service/delivery-times-service";
 
 @Component({
   templateUrl: 'build/pages/home/home.html',
   providers: [MealsService,
               SmsService,
-              SlackService],
+              SlackService,
+              DeliveryTimesService],
   directives: [LogoComponent]
 })
 export class HomePage implements OnInit {
@@ -21,12 +23,14 @@ export class HomePage implements OnInit {
   private currentDate: string;
   private orderTime: string;
   private localStorage: LocalStorage;
+  private deliveryTime: string = "13:00";
+  private deliveryCheck: boolean = false;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
               private modalCtrl: ModalController, private mealsService: MealsService,
               private statsService: StatsService, private events: Events,
               private settingsService: SettingsService, private smsService: SmsService,
-              private slackService: SlackService) {
+              private slackService: SlackService, private deliveryTimesService: DeliveryTimesService) {
     this.currentDate = new Date().toLocaleDateString();
     this.localStorage = new Storage(LocalStorage);
   }
@@ -35,7 +39,12 @@ export class HomePage implements OnInit {
     this.loadMeals();
     this.localStorage.get(this.currentDate).then((check) => {
       if(check) {
-        //this.orderTime = check;
+        this.orderTime = check;
+      }
+    });
+    this.deliveryTimesService.getDeliveryTime(this.currentDate).then(resp => {
+      if(resp.res.rows.length) {
+        this.deliveryCheck = true;
       }
     });
   }
@@ -206,7 +215,7 @@ export class HomePage implements OnInit {
   showOrderError(err) {
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: 'There was an error sending your order. Try to check your settings: '+err,
+      subTitle: 'There was an error sending your order. Try to check your settings: ',
       buttons: ['OK']
     });
     alert.present();
@@ -224,17 +233,57 @@ export class HomePage implements OnInit {
 
   // send message to slack group
   sendSlackMessage() {
-    let webhookUrl = "https://hooks.slack.com/services/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";
-    let textMsg = this.createSlackMessage();
-    this.slackService.sendMessage(webhookUrl, textMsg).subscribe(
-      res => console.log(res),
-      err => console.log(err)
-    );
+    let webhookUrl = "https://hooks.slack.com/services/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";
+    this.deliveryTimesService.getDeliveryTimes().then(resp => {
+      let textMsg = this.createSlackMessage(resp);
+      this.slackService.sendMessage(webhookUrl, textMsg).subscribe(
+        res => console.log(res),
+        err => console.log(err)
+      );
+    });
+
   }
 
   // create message basing on average delivery time
-  createSlackMessage(): string {
-    return "L'ordine per i pranzi è stato inviato. Tempo stimato di consegna: 1 ora e 30 minuti";
+  createSlackMessage(resp): string {
+    let avgMinutes = 60; //if no delivery times have been previously submitted
+    let result = "L'ordine per il pranzo è stato inviato! Tempo di consegna stimato: ";
+    if (resp.res.rows.length > 0) {
+      avgMinutes = 0;
+      for (var i = 0; i < resp.res.rows.length; i++) {
+        avgMinutes += resp.res.rows.item(i).time;
+      }
+      avgMinutes = Math.ceil(avgMinutes / resp.res.rows.length);
+    }
+    let hours = Math.floor( avgMinutes / 60);
+    let minutes = avgMinutes % 60;
+    result += hours;
+    if(hours === 1) {
+      result += " ora";
+    } else {
+      result += " ore";
+    }
+    result += " e "+minutes;
+    if(minutes === 1) {
+      result += " minuto.";
+    } else {
+      result += " minuti.";
+    }
+    return result;
+  }
+
+  submitDeliveryTime() {
+    this.deliveryTimesService.saveDeliveryTime(this.currentDate,
+      this.calculateMinutesGap(this.deliveryTime, this.orderTime)).then(res => {
+        this.deliveryCheck = true;
+      });
+  }
+
+  calculateMinutesGap(time1, time2) {
+    let arr1 = time1.split(':');
+    let arr2 = time2.split(':');
+    return (+arr1[0] * 60 + +arr1[1]) -
+          (+arr2[0] * 60 + +arr2[1]);
   }
 
 }

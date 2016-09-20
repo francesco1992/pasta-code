@@ -3,34 +3,49 @@
     <logo menuToggle></logo>
     <ion-title>Pasta Code</ion-title>
     <ion-buttons end>
-      <button (click)="addMeal()"><ion-icon name="add"></ion-icon></button>
+      <button (click)="addMeal()">
+        <ion-icon name="add"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding class="home">
-  <ion-list inset>
-    <ion-list-header *ngIf="!orderTime">
+<ion-content padding class = "home">
+  <ion-list>
+    <ion-list-header *ngIf = "!orderTime">
       Create a new order for today ({{currentDate}})
     </ion-list-header>
-    <ion-list-header *ngIf="orderTime">
+    <ion-list-header *ngIf = "orderTime">
       Today order sent at ({{orderTime}})
     </ion-list-header>
-    <ion-item *ngFor="let meal of meals"
-              (press)="deleteMeal($event, meal)" class="light-grey">
+    <ion-item *ngFor = "let meal of meals"
+              (press) = "deleteMeal($event, meal)" class="light-grey">
       <span>{{meal.name}}</span>
-      <ion-icon class="pointer-cursor light-black"
-                item-right name="remove-circle"
-                (click)="decreaseCount(meal)"></ion-icon>
+      <ion-icon class = "pointer-cursor light-black"
+                item-right name = "remove-circle"
+                (click) = "decreaseCount(meal)">
+      </ion-icon>
       <span item-right>{{meal.count}}</span>
-      <ion-icon class="pointer-cursor light-black"
-                item-right name="add-circle"
-                (click)="increaseCount(meal)"></ion-icon>
+      <ion-icon class = "pointer-cursor light-black"
+                item-right name = "add-circle"
+                (click) = "increaseCount(meal)">
+      </ion-icon>
     </ion-item>
-
-    <button full secondary
-            (click)="showOrderConfirmation()"
-            class="btn-margin-top"
-            [disabled]="orderTime">Send Message</button>
+    <ion-item *ngIf = "orderTime">
+      <ion-icon item-left class = "ios-time-outline"
+                ios = "ios-time-outline"
+                name = "time" style="margin-right: 4px"></ion-icon>
+      <ion-label>Delivery Time:</ion-label>
+      <ion-datetime displayFormat = "HH:mm"
+                    [(ngModel)] = "deliveryTime"
+                    (ionChange) = "submitDeliveryTime()"
+                    [disabled] = "deliveryCheck">
+      </ion-datetime>
+    </ion-item>
   </ion-list>
+  <button full secondary
+          (click) = "showOrderConfirmation()"
+          class = "btn-margin-top"
+          [disabled] = "orderTime">Send Message
+  </button>
 </ion-content>
